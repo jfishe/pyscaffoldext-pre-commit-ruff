@@ -1,0 +1,34 @@
+[tool.ruff]
+# In addition to the standard set of exclusions, omit all tests, plus a specific file.
+extend-exclude = ["docs/conf.py"]
+
+[tool.ruff.lint]
+select = [
+  # pydocstyle
+  "D",
+  # Augment the convention by requiring an imperative mood for all
+  # docstrings.
+  "D401",
+  # pycodestyle
+  "E",
+  # trailing-whitespace (W291)
+  # missing-newline-at-end-of-file (W292)
+  "W",
+  # Pyflakes
+  "F",
+  # pyupgrade
+  "UP",
+  # flake8-bugbear
+  "B",
+  # flake8-simplify
+  "SIM",
+  # isort
+  "I",
+]
+
+# [tool.ruff.lint.pydocstyle]
+# convention = "numpy"
+
+[tool.ruff.format]
+docstring-code-format = true
+docstring-code-line-length = 20
