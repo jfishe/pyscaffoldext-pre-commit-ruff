@@ -1,3 +1,5 @@
+"""Test custom extension."""
+
 from pathlib import Path
 
 from pyscaffold import cli
@@ -15,6 +17,10 @@ EXT_FLAGS = [PreCommitRuff().flag]
 
 
 def test_add_custom_extension(tmpfolder):
+    """test_add_custom_extension.
+
+    :param tmpfolder: Temporary working directory.
+    """
     args = ["my_project", "--no-config", "-p", "my_package", *EXT_FLAGS]
     # --no-config: avoid extra config from dev's machine interference
     cli.main(args)
@@ -22,6 +28,10 @@ def test_add_custom_extension(tmpfolder):
 
 
 def test_add_custom_extension_and_pretend(tmpfolder):
+    """test_add_custom_extension_and_pretend.
+
+    :param tmpfolder: Temporary working directory.
+    """
     args = ["my_project", "--no-config", "--pretend", "-p", "my_package", *EXT_FLAGS]
     # --no-config: avoid extra config from dev's machine interference
     cli.main(args)
@@ -30,6 +40,10 @@ def test_add_custom_extension_and_pretend(tmpfolder):
 
 
 def test_add_custom_extension_with_namespace(tmpfolder):
+    """test_add_custom_extension_with_namespace.
+
+    :param tmpfolder: Temporary working directory.
+    """
     args = [
         "my_project",
         "--no-config",  # avoid extra config from dev's machine interference
@@ -47,6 +61,10 @@ def test_add_custom_extension_with_namespace(tmpfolder):
 # To use marks make sure to uncomment them in setup.cfg
 # @pytest.mark.slow
 def test_generated_extension(tmpfolder):
+    """test_generated_extension.
+
+    :param tmpfolder: Temporary working directory.
+    """
     args = [
         "my_project",
         "--no-config",  # avoid extra config from dev's machine interference

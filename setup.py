@@ -1,10 +1,10 @@
-"""
-    Setup file for pyscaffoldext-pre-commit-ruff.
-    Use setup.cfg to configure your project.
+"""Setup file for pyscaffoldext-pre-commit-ruff.
 
-    This file was generated with PyScaffold 4.6.
-    PyScaffold helps you to put up the scaffold of your new Python project.
-    Learn more under: https://pyscaffold.org/
+Use setup.cfg to configure your project.
+
+This file was generated with PyScaffold 4.6.
+PyScaffold helps you to put up the scaffold of your new Python project.
+Learn more under: https://pyscaffold.org/
 """
 
 from setuptools import setup
