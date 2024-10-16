@@ -9,45 +9,35 @@ build-backend = "setuptools.build_meta"
 version_scheme = "no-guess-dev"
 
 [tool.mypy]
-exclude = [
-    '.tox/',
-    'build/',
-    'dist/',
-    'docs/'
-    ]
+exclude = ['\.tox/', 'build/', 'dist/', 'docs/']
+ignore_missing_imports = true
+follow_imports = "silent"
 
 [tool.ruff]
-line-length = 88
-exclude = [
-    ".tox",
-    "build",
-    "dist",
-    ".eggs",
-    "docs/conf.py"
-]
+extend-exclude = ["docs/conf.py"]
 
 [tool.ruff.lint]
 select = [
-    # pydocstyle
-    "D",
-    # Augment the convention by requiring an imperative mood for all
-    # docstrings.
-    "D401",
-    # pycodestyle
-    "E",
-    # trailing-whitespace (W291)
-    # missing-newline-at-end-of-file (W292)
-    "W",
-    # Pyflakes
-    "F",
-    # pyupgrade
-    "UP",
-    # flake8-bugbear
-    "B",
-    # flake8-simplify
-    "SIM",
-    # isort
-    "I",
+  # pydocstyle
+  "D",
+  # Augment the convention by requiring an imperative mood for all
+  # docstrings.
+  "D401",
+  # pycodestyle
+  "E",
+  # trailing-whitespace (W291)
+  # missing-newline-at-end-of-file (W292)
+  "W",
+  # Pyflakes
+  "F",
+  # pyupgrade
+  "UP",
+  # flake8-bugbear
+  "B",
+  # flake8-simplify
+  "SIM",
+  # isort
+  "I",
 ]
 
 [tool.ruff.lint.pydocstyle]
