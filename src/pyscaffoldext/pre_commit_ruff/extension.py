@@ -1,5 +1,6 @@
 """Add pre-commit-ruff extension."""
 
+import string
 from functools import partial
 from typing import List
 
@@ -58,6 +59,8 @@ changes::
 .. _pre-commit: https://pre-commit.com/
 """
 
+PYPROJ_INSERT_AFTER = 'version_scheme = "no-guess-dev"\n'
+
 
 class PreCommitRuff(Extension):
     """Generate pre-commit configuration file.
@@ -83,20 +86,6 @@ class PreCommitRuff(Extension):
         return self.register(actions, install, before="report_done")
 
 
-# def add_files(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
-#     """Add custom extension files. See :obj:`pyscaffold.actions.Action`"""
-
-#     template = get_template("awesome_file", relative_to=__name__)
-#     test_template = get_template("test_awesome_file", relative_to=__name__)
-
-#     files: Structure = {
-#         "src": {opts["package"]: {"awesome_file.py": (template, no_overwrite())}},
-#         "tests": {"test_awesome_file.py": (test_template, no_overwrite())},
-#     }
-
-#     return merge(struct, files), opts
-
-
 def add_files(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
     """Add .pre-commit-config.yaml file to structure."""
     files: Structure = {
@@ -108,7 +97,16 @@ def add_files(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
         ),
     }
 
-    struct = structure.modify(struct, "README.rst", partial(add_instructions, opts))
+    struct = structure.modify(
+        struct,
+        "README.rst",
+        partial(add_instructions, opts),
+    )
+    struct = structure.modify(
+        struct,
+        "pyproject.toml",
+        partial(add_pyproject, opts),
+    )
     return structure.merge(struct, files), opts
 
 
@@ -157,4 +155,30 @@ def add_instructions(
         assert i > 0, f"{INSERT_AFTER!r} not found in README template:\n{text}"
         j = i + len(INSERT_AFTER)
         text = text[:j] + README_NOTE.format(**opts) + text[j:]
+    return text, file_op
+
+
+def add_pyproject(
+    opts: ScaffoldOpts, content: AbstractContent, file_op: FileOp
+) -> ResolvedLeaf:
+    """Append Ruff configuration to pyproject.toml."""
+    template: string.Template = get_template(
+        name="pyproject_toml",
+        relative_to=my_templates.__name__,
+    )
+
+    text = structure.reify_content(content, opts)
+    if text is not None:
+        i = text.find(PYPROJ_INSERT_AFTER)
+        assert i > 0, (
+            f"{PYPROJ_INSERT_AFTER!r} not found in " f"pyproject.toml template:\n{text}"
+        )
+        j = i + len(PYPROJ_INSERT_AFTER)
+        text = (
+            text[:j]
+            + str(
+                structure.reify_content(template, opts),
+            )
+            + text[j:]
+        )
     return text, file_op
