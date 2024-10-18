@@ -1,79 +1,45 @@
 """Add pre-commit-ruff extension."""
 
 import string
-from functools import partial
+from argparse import ArgumentParser
+from functools import partial, reduce
 from typing import List
 
-from pyscaffold import shell, structure
+from pyscaffold import structure
 from pyscaffold.actions import Action, ActionParams, ScaffoldOpts, Structure
-from pyscaffold.exceptions import ShellCommandException
-from pyscaffold.extensions import Extension, venv
-from pyscaffold.file_system import chdir
-from pyscaffold.log import logger
+from pyscaffold.extensions import Extension, include
+from pyscaffold.extensions.pre_commit import PreCommit
 from pyscaffold.operations import FileOp, no_overwrite
-from pyscaffold.structure import AbstractContent, ResolvedLeaf
+from pyscaffold.structure import AbstractContent, Leaf, ResolvedLeaf, resolve_leaf
 from pyscaffold.templates import get_template
+from pyscaffold.update import ConfigUpdater
 
 from . import templates as my_templates
-
-EXECUTABLE = "pre-commit"
-CMD_OPT = "____command-pre_commit"  # we don't want this to be persisted
-INSERT_AFTER = ".. _pyscaffold-notes:\n"
-
-UPDATE_MSG = """
-It is a good idea to update the hooks to the latest version:
-
-    pre-commit autoupdate
-
-Don't forget to tell your contributors to also install and use pre-commit.
-"""
-
-SUCCESS_MSG = "\nA pre-commit hook was installed in your repo." + UPDATE_MSG
-
-ERROR_MSG = """
-Impossible to install pre-commit automatically, please open an issue in
-https://github.com/pyscaffold/pyscaffold/issues.
-"""
-
-INSTALL_MSG = f"""
-A `.pre-commit-config.yaml` file was generated inside your project but in
-order to make sure the hooks will run, please install `pre-commit`:
-
-    cd {{project_path}}
-    # it is a good idea to create and activate a virtualenv here
-    pip install pre-commit
-{UPDATE_MSG}
-"""
-
-README_NOTE = f"""
-Making Changes & Contributing
-=============================
-
-This project uses `pre-commit`_, please make sure to install it before making any
-changes::
-
-    pip install pre-commit
-    cd {{name}}
-    pre-commit install
-{UPDATE_MSG.replace(':', '::')}
-.. _pre-commit: https://pre-commit.com/
-"""
 
 PYPROJ_INSERT_AFTER = 'version_scheme = "no-guess-dev"\n'
 
 
 class PreCommitRuff(Extension):
-    """Generate pre-commit configuration file.
+    """Generate pre-commit configuration file for Ruff (includes `--pre-commit`)."""
 
-    This class serves as the skeleton for your new PyScaffold Extension. Refer
-    to the official documentation to discover how to implement a PyScaffold
-    extension - https://pyscaffold.org/en/latest/extensions.html
-    """
+    def augment_cli(self, parser: ArgumentParser):
+        """Augments the command-line interface parser.
+
+        See :obj:`~pyscaffold.extension.Extension.augment_cli`.
+        """
+        parser.add_argument(
+            self.flag,
+            help=self.help_text,
+            nargs=0,
+            action=include(
+                PreCommit(),
+                self,
+            ),
+        )
+        return self
 
     def activate(self, actions: List[Action]) -> List[Action]:
-        """Activate extension.
-
-        See :obj:`pyscaffold.extension.Extension.activate`.
+        """Activates See :obj:`pyscaffold.extension.Extension.activate`.
 
         Args:
             actions (list): list of actions to perform
@@ -81,13 +47,14 @@ class PreCommitRuff(Extension):
         Returns:
             list: updated list of actions
         """
-        actions = self.register(actions, add_files, after="define_structure")
-        actions = self.register(actions, find_executable, after="define_structure")
-        return self.register(actions, install, before="report_done")
+        return self.register(actions, add_files)
 
 
 def add_files(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
-    """Add .pre-commit-config.yaml file to structure."""
+    """Replace .pre-commit-config.yaml and update setup.cfg.
+
+    Add mypy section to setup.cfg.
+    """
     files: Structure = {
         ".pre-commit-config.yaml": (
             get_template(
@@ -95,13 +62,23 @@ def add_files(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
             ),
             no_overwrite(),
         ),
+        "setup.cfg": modify_setupcfg(struct["setup.cfg"], opts),
     }
+    # template_pconfig = structure.reify_content(
+    #     get_template(
+    #         name="pre-commit-ruff-config",
+    #         relative_to=my_templates.__name__,
+    #     ),
+    #     opts,
+    # )
+    # template_pyproject = structure.reify_content(
+    #     get_template(
+    #         name="pyproject_toml",
+    #         relative_to=my_templates.__name__,
+    #     ),
+    #     opts,
+    # )
 
-    struct = structure.modify(
-        struct,
-        "README.rst",
-        partial(add_instructions, opts),
-    )
     struct = structure.modify(
         struct,
         "pyproject.toml",
@@ -110,58 +87,55 @@ def add_files(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
     return structure.merge(struct, files), opts
 
 
-def find_executable(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
-    """Find the pre-commit executable that should run later in the next action...
+def modify_setupcfg(definition: Leaf, opts: ScaffoldOpts) -> ResolvedLeaf:
+    """Modify setup.cfg to add template settings before it is written.
 
-    Or take advantage of the venv to install it...
+    See :obj:`pyscaffold.operations`.
     """
-    pre_commit = shell.get_command(EXECUTABLE)
-    opts = opts.copy()
-    if pre_commit:
-        opts.setdefault(CMD_OPT, pre_commit)
-    else:
-        # We can try to add it for venv to install... it will only work if the user is
-        # already creating a venv anyway.
-        opts.setdefault("venv_install", []).extend(["pre-commit"])
+    contents, original_op = resolve_leaf(definition)
 
-    return struct, opts
+    if contents is None:
+        raise ValueError("File contents for setup.cfg should not be None")
 
+    setupcfg = ConfigUpdater()
+    setupcfg.read_string(
+        str(structure.reify_content(contents, opts)),
+    )
 
-def install(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
-    """Attempt to install pre-commit in the project."""
-    project_path = opts.get("project_path", "PROJECT_DIR")
-    pre_commit = opts.get(CMD_OPT) or shell.get_command(EXECUTABLE, venv.get_path(opts))
-    # ^  try again after venv, maybe it was installed
-    if pre_commit:
-        try:
-            with chdir(opts.get("project_path", "."), **opts):
-                pre_commit("install", pretend=opts.get("pretend"))
-            logger.warning(SUCCESS_MSG)
-            return struct, opts
-        except ShellCommandException:
-            logger.error(ERROR_MSG, exc_info=True)
+    modifiers = (add_setupcfg,)
+    new_setupcfg = reduce(lambda acc, fn: fn(acc, opts), modifiers, setupcfg)
 
-    logger.warning(INSTALL_MSG.format(project_path=project_path))
-    return struct, opts
+    return str(new_setupcfg), original_op
 
 
-def add_instructions(
-    opts: ScaffoldOpts, content: AbstractContent, file_op: FileOp
-) -> ResolvedLeaf:
-    """Add pre-commit instructions to README."""
-    text = structure.reify_content(content, opts)
-    if text is not None:
-        i = text.find(INSERT_AFTER)
-        assert i > 0, f"{INSERT_AFTER!r} not found in README template:\n{text}"
-        j = i + len(INSERT_AFTER)
-        text = text[:j] + README_NOTE.format(**opts) + text[j:]
-    return text, file_op
+def add_setupcfg(setupcfg: ConfigUpdater, opts) -> ConfigUpdater:
+    """Add section(s) to setup.cfg."""
+    template_setupcfg = ConfigUpdater().read_string(
+        str(
+            structure.reify_content(
+                get_template(
+                    name="setup_cfg",
+                    relative_to=my_templates.__name__,
+                ),
+                opts,
+            ),
+        )
+    )
+
+    for k in template_setupcfg:
+        if not setupcfg.has_section(k):
+            setupcfg["pyscaffold"].add_before.section(k)
+        setupcfg[k] = template_setupcfg[k].detach()
+    setupcfg["pyscaffold"].add_before.space(newlines=1)
+
+    return setupcfg
 
 
 def add_pyproject(
     opts: ScaffoldOpts, content: AbstractContent, file_op: FileOp
 ) -> ResolvedLeaf:
     """Append Ruff configuration to pyproject.toml."""
+    # logger.report("run", "pyproject " + str(dir(file_op)))
     template: string.Template = get_template(
         name="pyproject_toml",
         relative_to=my_templates.__name__,
