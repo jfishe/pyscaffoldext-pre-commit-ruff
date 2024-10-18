@@ -51,9 +51,12 @@ class PreCommitRuff(Extension):
 
 
 def add_files(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
-    """Replace .pre-commit-config.yaml and update setup.cfg.
+    """Replace .pre-commit-config.yaml. Update setup.cfg and pyproject.toml.
 
     Add mypy section to setup.cfg.
+    Remove flake8 section from setup.cfg. Ruff replaces flake8.
+
+    Add ruff configuration to pyproject.toml.
     """
     files: Structure = {
         ".pre-commit-config.yaml": (
@@ -110,7 +113,7 @@ def modify_setupcfg(definition: Leaf, opts: ScaffoldOpts) -> ResolvedLeaf:
 
 def add_setupcfg(setupcfg: ConfigUpdater, opts) -> ConfigUpdater:
     """Add section(s) to setup.cfg."""
-    template_setupcfg = ConfigUpdater().read_string(
+    template = ConfigUpdater().read_string(
         str(
             structure.reify_content(
                 get_template(
@@ -122,10 +125,10 @@ def add_setupcfg(setupcfg: ConfigUpdater, opts) -> ConfigUpdater:
         )
     )
 
-    for k in template_setupcfg:
+    for k in template:
         if not setupcfg.has_section(k):
             setupcfg["pyscaffold"].add_before.section(k)
-        setupcfg[k] = template_setupcfg[k].detach()
+        setupcfg[k] = template[k].detach()
     setupcfg["pyscaffold"].add_before.space(newlines=1)
 
     return setupcfg
