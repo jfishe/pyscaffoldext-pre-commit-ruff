@@ -10,7 +10,12 @@ from pyscaffold.actions import Action, ActionParams, ScaffoldOpts, Structure
 from pyscaffold.extensions import Extension, include
 from pyscaffold.extensions.pre_commit import PreCommit
 from pyscaffold.operations import FileOp, no_overwrite
-from pyscaffold.structure import AbstractContent, Leaf, ResolvedLeaf, resolve_leaf
+from pyscaffold.structure import (
+    AbstractContent,
+    Node,
+    ResolvedLeaf,
+    reify_leaf,
+)
 from pyscaffold.templates import get_template
 from pyscaffold.update import ConfigUpdater
 
@@ -67,20 +72,6 @@ def add_files(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
         ),
         "setup.cfg": modify_setupcfg(struct["setup.cfg"], opts),
     }
-    # template_pconfig = structure.reify_content(
-    #     get_template(
-    #         name="pre-commit-ruff-config",
-    #         relative_to=my_templates.__name__,
-    #     ),
-    #     opts,
-    # )
-    # template_pyproject = structure.reify_content(
-    #     get_template(
-    #         name="pyproject_toml",
-    #         relative_to=my_templates.__name__,
-    #     ),
-    #     opts,
-    # )
 
     struct = structure.modify(
         struct,
@@ -90,25 +81,19 @@ def add_files(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
     return structure.merge(struct, files), opts
 
 
-def modify_setupcfg(definition: Leaf, opts: ScaffoldOpts) -> ResolvedLeaf:
+def modify_setupcfg(definition: Node, opts: ScaffoldOpts) -> ResolvedLeaf:
     """Modify setup.cfg to add template settings before it is written.
 
     See :obj:`pyscaffold.operations`.
     """
-    contents, original_op = resolve_leaf(definition)
+    content, action = reify_leaf(definition, opts)  # pyright: ignore [reportArgumentType]
 
-    if contents is None:
-        raise ValueError("File contents for setup.cfg should not be None")
-
-    setupcfg = ConfigUpdater()
-    setupcfg.read_string(
-        str(structure.reify_content(contents, opts)),
-    )
+    setupcfg = ConfigUpdater().read_string(str(content))
 
     modifiers = (add_setupcfg,)
     new_setupcfg = reduce(lambda acc, fn: fn(acc, opts), modifiers, setupcfg)
 
-    return str(new_setupcfg), original_op
+    return str(new_setupcfg), action
 
 
 def add_setupcfg(setupcfg: ConfigUpdater, opts) -> ConfigUpdater:
@@ -126,7 +111,7 @@ def add_setupcfg(setupcfg: ConfigUpdater, opts) -> ConfigUpdater:
     )
 
     for k in template:
-        if not setupcfg.has_section(k):
+        if not setupcfg.has_section(k):  # pragma: no cover
             setupcfg["pyscaffold"].add_before.section(k)
         setupcfg[k] = template[k].detach()
     setupcfg["pyscaffold"].add_before.space(newlines=1)
@@ -138,24 +123,23 @@ def add_pyproject(
     opts: ScaffoldOpts, content: AbstractContent, file_op: FileOp
 ) -> ResolvedLeaf:
     """Append Ruff configuration to pyproject.toml."""
-    # logger.report("run", "pyproject " + str(dir(file_op)))
     template: string.Template = get_template(
         name="pyproject_toml",
         relative_to=my_templates.__name__,
     )
 
-    text = structure.reify_content(content, opts)
-    if text is not None:
-        i = text.find(PYPROJ_INSERT_AFTER)
-        assert i > 0, (
-            f"{PYPROJ_INSERT_AFTER!r} not found in " f"pyproject.toml template:\n{text}"
+    pyproj_content = structure.reify_content(content, opts)
+    i = pyproj_content.find(PYPROJ_INSERT_AFTER)  # pyright: ignore [reportOptionalMemberAccess]
+    assert i > 0, (
+        f"{PYPROJ_INSERT_AFTER!r} not found in "
+        f"pyproject.toml template:\n{pyproj_content}"
+    )
+    j = i + len(PYPROJ_INSERT_AFTER)
+    pyproj = (
+        pyproj_content[:j]  # pyright: ignore [reportOptionalSubscript]
+        + str(
+            structure.reify_content(template, opts),
         )
-        j = i + len(PYPROJ_INSERT_AFTER)
-        text = (
-            text[:j]
-            + str(
-                structure.reify_content(template, opts),
-            )
-            + text[j:]
-        )
-    return text, file_op
+        + pyproj_content[j:]  # pyright: ignore [reportOptionalSubscript]
+    )
+    return pyproj, file_op
