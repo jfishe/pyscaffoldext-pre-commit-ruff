@@ -1,11 +1,10 @@
 """Add pre-commit-ruff extension."""
 
-import string
 from argparse import ArgumentParser
 from functools import partial, reduce
 from typing import List
 
-from pyscaffold import structure
+from pyscaffold import structure, toml
 from pyscaffold.actions import Action, ActionParams, ScaffoldOpts, Structure
 from pyscaffold.extensions import Extension, include
 from pyscaffold.extensions.pre_commit import PreCommit
@@ -123,23 +122,8 @@ def add_pyproject(
     opts: ScaffoldOpts, content: AbstractContent, file_op: FileOp
 ) -> ResolvedLeaf:
     """Append Ruff configuration to pyproject.toml."""
-    template: string.Template = get_template(
-        name="pyproject_toml",
-        relative_to=my_templates.__name__,
+    pyproj_content = toml.loads(str(structure.reify_content(content, opts)))
+    pyproj_new = toml.loads(
+        str(structure.reify_content(my_templates.pyproject_toml, opts))
     )
-
-    pyproj_content = structure.reify_content(content, opts)
-    i = pyproj_content.find(PYPROJ_INSERT_AFTER)  # pyright: ignore [reportOptionalMemberAccess]
-    assert i > 0, (
-        f"{PYPROJ_INSERT_AFTER!r} not found in "
-        f"pyproject.toml template:\n{pyproj_content}"
-    )
-    j = i + len(PYPROJ_INSERT_AFTER)
-    pyproj = (
-        pyproj_content[:j]  # pyright: ignore [reportOptionalSubscript]
-        + str(
-            structure.reify_content(template, opts),
-        )
-        + pyproj_content[j:]  # pyright: ignore [reportOptionalSubscript]
-    )
-    return pyproj, file_op
+    return toml.dumps({**pyproj_content, **pyproj_new}), file_op
