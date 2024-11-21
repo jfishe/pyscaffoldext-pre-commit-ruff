@@ -34,6 +34,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with: { fetch-depth: 0 } # deep clone for setuptools-scm
+      - name: Setup git user
+        run: |
+            git config --global user.name "$(git --no-pager log --format=format:'%an' -n 1)"
+            git config --global user.email "$(git --no-pager log --format=format:'%ae' -n 1)"
       - uses: actions/setup-python@v5
         id: setup-python
         with: { python-version: "3.10" }
