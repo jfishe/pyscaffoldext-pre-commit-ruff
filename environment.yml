@@ -4,6 +4,6 @@ channels:
   - defaults
 dependencies:
   - pip
-  - python[version='<3.12']
+  - python # [version='<3.12']
   - pip:
     - -e .[testing]

@@ -42,3 +42,4 @@ repos:
     hooks:
       - id: rst-lint
         exclude: ^docs
+        additional_dependencies: [pygments]
