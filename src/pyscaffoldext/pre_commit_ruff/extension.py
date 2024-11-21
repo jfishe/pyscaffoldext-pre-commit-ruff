@@ -51,7 +51,11 @@ class PreCommitRuff(Extension):
         Returns:
             list: updated list of actions
         """
-        return self.register(actions, add_files)
+        return self.register(
+            actions,
+            add_files,
+            after="pyscaffold.extensions.pre_commit:add_files",
+        )
 
 
 def add_files(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
@@ -65,7 +69,8 @@ def add_files(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
     files: Structure = {
         ".pre-commit-config.yaml": (
             get_template(
-                name="pre-commit-ruff-config", relative_to=my_templates.__name__
+                name="pre-commit-ruff-config",
+                relative_to=my_templates.__name__,
             ),
             no_overwrite(),
         ),
@@ -75,7 +80,7 @@ def add_files(struct: Structure, opts: ScaffoldOpts) -> ActionParams:
     struct = structure.modify(
         struct,
         "pyproject.toml",
-        partial(add_pyproject, opts),
+        partial(modify_pyproject, opts),
     )
     return structure.merge(struct, files), opts
 
@@ -109,21 +114,26 @@ def add_setupcfg(setupcfg: ConfigUpdater, opts) -> ConfigUpdater:
         )
     )
 
+    setupcfg.remove_section("flake8")
+
     for k in template:
-        if not setupcfg.has_section(k):  # pragma: no cover
-            setupcfg["pyscaffold"].add_before.section(k)
+        setupcfg["pyscaffold"].add_before.section(k)
         setupcfg[k] = template[k].detach()
     setupcfg["pyscaffold"].add_before.space(newlines=1)
 
     return setupcfg
 
 
-def add_pyproject(
+def modify_pyproject(
     opts: ScaffoldOpts, content: AbstractContent, file_op: FileOp
 ) -> ResolvedLeaf:
-    """Append Ruff configuration to pyproject.toml."""
-    pyproj_content = toml.loads(str(structure.reify_content(content, opts)))
+    """Add Ruff configuration to pyproject.toml."""
     pyproj_new = toml.loads(
-        str(structure.reify_content(my_templates.pyproject_toml, opts))
+        "\n".join(
+            (
+                str(structure.reify_content(content, opts)),
+                str(structure.reify_content(my_templates.pyproject_toml, opts)),
+            )
+        )
     )
-    return toml.dumps({**pyproj_content, **pyproj_new}), file_op
+    return toml.dumps(pyproj_new), file_op
