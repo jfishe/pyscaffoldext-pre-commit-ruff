@@ -318,16 +318,16 @@ version for ``pyscaffoldext-pre-commit-ruff``:
 
 .. _other kinds of contributions: https://opensource.guide/how-to-contribute
 .. _git: https://git-scm.com
-.. _contribution-guide.org: http://www.contribution-guide.org/
+.. _contribution-guide.org: https://www.contribution-guide.org/
 .. _guide created by FreeCodeCamp: https://github.com/freecodecamp/how-to-contribute-to-open-source
 .. _Python Software Foundation’s Code of Conduct: https://www.python.org/psf/conduct/
 .. _pyscaffold’s contributor’s guide: https://pyscaffold.org/en/stable/contributing.html
 .. _issue tracker: https://github.com/jfishe/pyscaffoldext-pre-commit-ruff/issues
 .. _Sphinx: https://www.sphinx-doc.org/en/master/
 .. _reStructuredText: https://www.sphinx-doc.org/en/master/usage/restructuredtext/
-.. _GitHub web interface: https://docs.github.com/en/github/managing-files-in-a-repository/managing-files-on-github/editing-files-in-your-repository
+.. _GitHub web interface: https://docs.github.com/en/repositories/working-with-files/managing-files/editing-files
 .. _repository: https://github.com/jfishe/pyscaffoldext-pre-commit-ruff
-.. _GitHub’s code editor: https://docs.github.com/en/github/managing-files-in-a-repository/managing-files-on-github/editing-files-in-your-repository
+.. _GitHub’s code editor:  https://docs.github.com/en/repositories/working-with-files/managing-files/editing-files
 .. _tox: https://tox.readthedocs.io/en/stable/
 .. _Extending PyScaffold: https://pyscaffold.org/en/stable/extensions.html#extending-pyscaffold
 .. _virtual environment: https://realpython.com/python-virtual-environments-a-primer/
@@ -336,7 +336,7 @@ version for ``pyscaffoldext-pre-commit-ruff``:
 .. _pre-commit: https://pre-commit.com/
 .. _docstrings: https://www.sphinx-doc.org/en/master/usage/extensions/napoleon.html
 .. _ruff: https://docs.astral.sh/ruff
-.. _descriptive commit message: https://chris.beams.io/posts/git-commit
+.. _descriptive commit message: https://cbea.ms/git-commit/
 .. _creating a PR: https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request
 .. _Pytest can drop you: https://docs.pytest.org/en/stable/how-to/failures.html#using-python-library-pdb-with-pytest
 .. _PyPI: https://pypi.org/
