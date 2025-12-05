@@ -20,6 +20,14 @@ Changed
 Removed
 -------
 
+`1.0.2`_ 2025-12-05
+===================
+
+Changed
+-------
+
+- Fix description ``setup.cfg``.
+
 `1.0.1`_ 2024-11-22
 ===================
 
@@ -57,6 +65,7 @@ Removed
 
 .. _Keep a Changelog: https://keepachangelog.com/en/1.0.0/
 .. _Semantic Versioning: https://semver.org/spec/v2.0.0.html
-.. _Unreleased: https://github.com/jfishe/pyscaffoldext-pre-commit-ruff/compare/1.0.1...HEAD
+.. _Unreleased: https://github.com/jfishe/pyscaffoldext-pre-commit-ruff/compare/1.0.2...HEAD
+.. _1.0.2: https://github.com/jfishe/pyscaffoldext-pre-commit-ruff/compare/1.0.1...1.0.2
 .. _1.0.1: https://github.com/jfishe/pyscaffoldext-pre-commit-ruff/compare/1.0.0...1.0.1
 .. _1.0.0: https://github.com/jfishe/pyscaffoldext-pre-commit-ruff/compare/3e1993e7efea9da6d7e8007317cc6d3ea3333a65...1.0.0
