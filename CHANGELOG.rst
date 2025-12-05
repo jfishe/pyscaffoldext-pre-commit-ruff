@@ -27,6 +27,7 @@ Changed
 -------
 
 - Fix description ``setup.cfg``.
+- Test ``py3.10`` through ``py3.14``.
 
 `1.0.1`_ 2024-11-22
 ===================
