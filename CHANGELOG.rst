@@ -20,6 +20,27 @@ Changed
 Removed
 -------
 
+`1.1.0`_ 2026-04-11
+===================
+
+Added
+-----
+
+- `pre-commit-hooks`_ ``name-tests-test`` ``--pytest-test-first``.
+- `Markdown Lint`_
+- `mdformat`_
+- `gitlint`_
+- `pyproject-fmt`_
+
+Changed
+-------
+
+- Sort and format ``.pre-commit-config.yaml``.
+- Enable Ruff show fixes.
+
+Removed
+-------
+
 `1.0.2`_ 2025-12-05
 ===================
 
@@ -64,9 +85,16 @@ Removed
 - ``flake8`` template and configuration
 - ``[testenv:publish]`` in ``tox.ini``
 
-.. _Keep a Changelog: https://keepachangelog.com/en/1.0.0/
-.. _Semantic Versioning: https://semver.org/spec/v2.0.0.html
-.. _Unreleased: https://github.com/jfishe/pyscaffoldext-pre-commit-ruff/compare/1.0.2...HEAD
-.. _1.0.2: https://github.com/jfishe/pyscaffoldext-pre-commit-ruff/compare/1.0.1...1.0.2
-.. _1.0.1: https://github.com/jfishe/pyscaffoldext-pre-commit-ruff/compare/1.0.0...1.0.1
 .. _1.0.0: https://github.com/jfishe/pyscaffoldext-pre-commit-ruff/compare/3e1993e7efea9da6d7e8007317cc6d3ea3333a65...1.0.0
+.. _1.0.1: https://github.com/jfishe/pyscaffoldext-pre-commit-ruff/compare/1.0.0...1.0.1
+.. _1.0.2: https://github.com/jfishe/pyscaffoldext-pre-commit-ruff/compare/1.0.1...1.0.2
+.. _1.1.0: https://github.com/jfishe/pyscaffoldext-pre-commit-ruff/compare/1.0.2...1.1.0
+.. _Unreleased: https://github.com/jfishe/pyscaffoldext-pre-commit-ruff/compare/1.1.0...HEAD
+.. _Keep a Changelog: https://keepachangelog.com/en/1.0.0/
+.. _Markdown Lint: https://github.com/igorshubovych/markdownlint-cli
+.. _Semantic Versioning: https://semver.org/spec/v2.0.0.html
+.. _gitlint: https://github.com/hukkin/mdformat
+.. _mdformat: https://github.com/hukkin/mdformat
+.. _pre-commit-hooks: https://github.com/pre-commit/pre-commit-hooks
+.. _pre-commit: https://pre-commit.com/
+.. _pyproject-fmt: https://github.com/tox-dev/pyproject-fmt

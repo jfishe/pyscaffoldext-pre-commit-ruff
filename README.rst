@@ -10,8 +10,14 @@ The ``ruff`` configuration is added to ``pyproject.toml`` because
 settings are commented out, for consistency with `PyScaffold`_'s
 ``flake8`` settings.
 
-`Codespell`_ is added to `pre-commit`_ configuration in
-``.pre-commit-config.yaml``; uncomment to enable.
+Uncomment to enable `pre-commit`_ additional hook in ``.pre-commit-config.yaml``.
+
+  - `pre-commit-hooks`_ ``name-tests-test`` ``--pytest-test-first``.
+  - `Markdown Lint`_
+  - `mdformat`_
+  - `gitlint`_
+  - `Codespell`_
+  - `pyproject-fmt`_
 
 `Mypy`_ settings are added to ``setup.cfg``.
 
@@ -50,12 +56,17 @@ Note
 This project has been set up using PyScaffold 4.6. For details and usage
 information on PyScaffold see https://pyscaffold.org/.
 
-.. _PyScaffold: https://pyscaffold.org/
-.. _Ruff Linter: https://docs.astral.sh/ruff/linter/
-.. _Ruff Formatter: https://docs.astral.sh/ruff/formatter/
-.. _Pre Commit Extension: https://pyscaffold.org/en/stable/features.html#pre-commit-hooks
-.. _flake8: https://flake8.pycqa.org/
-.. _isort: https://pycqa.github.io/isort/
 .. _Codespell: https://github.com/codespell-project/codespell
-.. _pre-commit: https://pre-commit.com/
+.. _Markdown Lint: https://github.com/igorshubovych/markdownlint-cli
 .. _Mypy: https://mypy.readthedocs.io/
+.. _Pre Commit Extension: https://pyscaffold.org/en/stable/features.html#pre-commit-hooks
+.. _PyScaffold: https://pyscaffold.org/
+.. _Ruff Formatter: https://docs.astral.sh/ruff/formatter/
+.. _Ruff Linter: https://docs.astral.sh/ruff/linter/
+.. _flake8: https://flake8.pycqa.org/
+.. _gitlint: https://github.com/hukkin/mdformat
+.. _isort: https://pycqa.github.io/isort/
+.. _mdformat: https://github.com/hukkin/mdformat
+.. _pre-commit-hooks: https://github.com/pre-commit/pre-commit-hooks
+.. _pre-commit: https://pre-commit.com/
+.. _pyproject-fmt: https://github.com/tox-dev/pyproject-fmt
