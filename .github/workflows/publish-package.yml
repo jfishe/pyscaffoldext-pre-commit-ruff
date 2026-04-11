@@ -32,7 +32,7 @@ jobs:
     outputs:
       wheel-distribution: ${{ steps.wheel-distribution.outputs.path }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with: { fetch-depth: 0 } # deep clone for setuptools-scm
       - uses: actions/setup-python@v5
         id: setup-python
@@ -49,7 +49,7 @@ jobs:
       - name: Store the distribution files for use in other stages
         # `tests` and `publish` will use the same pre-built distributions,
         # so we make sure to release the exact same package that was tested
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: python-distribution-files
           path: dist/
@@ -68,7 +68,7 @@ jobs:
         # - windows-latest
     runs-on: ${{ matrix.platform }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Setup git user
         run: |
             git config --global user.name "$(git --no-pager log --format=format:'%an' -n 1)"
@@ -79,7 +79,7 @@ jobs:
           python-version: ${{ matrix.python }}
       - uses: rhysd/action-setup-vim@v1.6.1
       - name: Retrieve pre-built distribution files
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with: { name: python-distribution-files, path: dist/ }
       - name: Run tests
         run: >-
@@ -121,7 +121,7 @@ jobs:
 
     steps:
       - name: Retrieve pre-built distribution files
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with: { name: python-distribution-files, path: dist/ }
       - name: Publish distribution 📦 to TestPyPI
         uses: pypa/gh-action-pypi-publish@release/v1
@@ -142,7 +142,7 @@ jobs:
       id-token: write # IMPORTANT: mandatory for trusted publishing
     steps:
       - name: Retrieve pre-built distribution files
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with: { name: python-distribution-files, path: dist/ }
       - name: Publish distribution 📦 to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
@@ -160,7 +160,7 @@ jobs:
 
     steps:
       - name: Download all the dists
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with: { name: python-distribution-files, path: dist/ }
       - name: Sign the dists with Sigstore
         uses: sigstore/gh-action-sigstore-python@v3.3.0
