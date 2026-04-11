@@ -2,7 +2,6 @@
 Changelog
 =========
 
-
 All notable changes to this project will be documented in this file.
 
 The format is based on `Keep a Changelog`_, and this project adheres to
@@ -20,26 +19,35 @@ Changed
 Removed
 -------
 
-`1.1.0`_ 2026-04-11
+`1.1.1`_ 2026-04-11
 ===================
 
 Added
 -----
 
+- CI badges.
+- `Dependabot`_ Github configuration.
 - `pre-commit-hooks`_ ``name-tests-test`` ``--pytest-test-first``.
 - `Markdown Lint`_
 - `mdformat`_
 - `gitlint`_
 - `pyproject-fmt`_
+- Add maintenance instructions for ``Github actions`` and ``Dependabot`` to
+  :doc:`Contributing <contributing>`.
 
 Changed
 -------
 
 - Sort and format ``.pre-commit-config.yaml``.
 - Enable Ruff show fixes.
+- Don't enable `pyproject-fmt`_ by default.
+- Replace `rst-lint <https://github.com/hoefling/pre-commit-rst-lint>`_ with
+  `Sphinx-lint <https://github.com/sphinx-contrib/sphinx-lint>`_.
 
 Removed
 -------
+
+- Unused ``Cirrus`` CI configuration.
 
 `1.0.2`_ 2025-12-05
 ===================
@@ -88,8 +96,9 @@ Removed
 .. _1.0.0: https://github.com/jfishe/pyscaffoldext-pre-commit-ruff/compare/3e1993e7efea9da6d7e8007317cc6d3ea3333a65...1.0.0
 .. _1.0.1: https://github.com/jfishe/pyscaffoldext-pre-commit-ruff/compare/1.0.0...1.0.1
 .. _1.0.2: https://github.com/jfishe/pyscaffoldext-pre-commit-ruff/compare/1.0.1...1.0.2
-.. _1.1.0: https://github.com/jfishe/pyscaffoldext-pre-commit-ruff/compare/1.0.2...1.1.0
-.. _Unreleased: https://github.com/jfishe/pyscaffoldext-pre-commit-ruff/compare/1.1.0...HEAD
+.. _1.1.1: https://github.com/jfishe/pyscaffoldext-pre-commit-ruff/compare/1.0.2...1.1.1
+.. _Unreleased: https://github.com/jfishe/pyscaffoldext-pre-commit-ruff/compare/1.1.1...HEAD
+.. _Dependabot: https://github.com/dependabot
 .. _Keep a Changelog: https://keepachangelog.com/en/1.0.0/
 .. _Markdown Lint: https://github.com/igorshubovych/markdownlint-cli
 .. _Semantic Versioning: https://semver.org/spec/v2.0.0.html
