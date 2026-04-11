@@ -2,7 +2,6 @@
 
 from argparse import ArgumentParser
 from functools import partial, reduce
-from typing import List
 
 from pyscaffold import structure, toml
 from pyscaffold.actions import Action, ActionParams, ScaffoldOpts, Structure
@@ -42,7 +41,7 @@ class PreCommitRuff(Extension):
         )
         return self
 
-    def activate(self, actions: List[Action]) -> List[Action]:
+    def activate(self, actions: list[Action]) -> list[Action]:
         """Activates See :obj:`pyscaffold.extension.Extension.activate`.
 
         Args:
