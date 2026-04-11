@@ -1,6 +1,26 @@
 pyscaffoldext-pre-commit-ruff
 =============================
 
+.. image:: https://github.com/jfishe/pyscaffoldext-pre-commit-ruff/actions/workflows/publish-package.yml/badge.svg
+   :target: https://github.com/jfishe/pyscaffoldext-pre-commit-ruff/actions/workflows/publish-package.yml
+   :alt: Test and Publish Python 🐍 distribution 📦 to PyPI and TestPyPI
+.. image:: https://img.shields.io/pypi/v/pyscaffoldext-pre-commit-ruff.svg
+   :target: https://pypi.org/project/pyscaffoldext-pre-commit-ruff/
+   :alt: PyPI Version
+.. image:: https://img.shields.io/pypi/pyversions/pyscaffoldext-pre-commit-ruff.svg
+   :alt: Python Versions
+.. image:: https://readthedocs.org/projects/pyscaffoldext-pre-commit-ruff/badge/?version=latest
+   :target: https://pyscaffoldext-pre-commit-ruff.readthedocs.io/en/latest/
+   :alt: Documentation Status
+.. image:: https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit
+   :target: https://pre-commit.com/
+   :alt: pre-commit enabled
+.. image:: https://img.shields.io/badge/linting-ruff-blue
+   :alt: Ruff
+.. image:: https://coveralls.io/repos/github/jfishe/pyscaffoldext-pre-commit-ruff/badge.svg?branch=main
+   :target: https://coveralls.io/github/jfishe/pyscaffoldext-pre-commit-ruff?branch=main
+   :alt: Coverage Status
+
 `PyScaffold`_ extension to use the `Ruff Linter`_ and `Ruff Formatter`_
 in place of the `Pre Commit Extension`_, ``putup --pre-commit`` defaults
 `flake8`_ and `isort`_.
